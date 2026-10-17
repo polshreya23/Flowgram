@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flopgram — Share your worst moments</title>
+<style>
+:root{--pink:#ff3d9a;--lime:#b6ff3c;--ban:#ffe135;--pur:#8a2be2;--ink:#111;--sky:#9be7ff;--peach:#ffc9a8}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Comic Sans MS","Chalkboard SE",cursive;color:var(--ink);padding-bottom:150px;
+ background:radial-gradient(circle at 10% 20%,#ffd1ec 0 60px,transparent 61px),radial-gradient(circle at 90% 60%,#d4ffb0 0 90px,transparent 91px),
+ radial-gradient(circle at 30% 85%,#c9b8ff 0 70px,transparent 71px),repeating-linear-gradient(45deg,var(--ban) 0 22px,#fff36b 22px 44px);background-attachment:fixed;overflow-x:hidden}
+#app{max-width:760px;margin:0 auto;padding:10px;transition:transform 1.2s cubic-bezier(.5,-.5,.5,1.5)}
+.card{background:#fff;border:4px solid var(--ink);border-radius:255px 18px 225px 18px/18px 225px 18px 255px;box-shadow:7px 7px 0 var(--ink);padding:16px 18px;margin:18px 6px;transform:rotate(var(--r,0deg));animation:jig 2.4s ease-in-out infinite}
+.card:nth-child(even){--r:1.6deg;background:#fff4fb}.card:nth-child(odd){--r:-1.4deg}
+.card:hover{animation-duration:.3s}
+@keyframes jig{50%{transform:rotate(calc(var(--r) * -1)) translateY(-3px)}}
+h1{font:900 clamp(2.2rem,9vw,3.6rem) Impact,"Arial Black",sans-serif;margin:0;color:var(--pink);-webkit-text-stroke:2px var(--ink);text-shadow:4px 4px 0 var(--pur);letter-spacing:1px}
+h1 span{display:inline-block}
+h2{font-family:Georgia,"Times New Roman",serif;font-style:italic;margin:0 0 8px;font-size:1.4rem}
+.tag{font-family:"Brush Script MT",cursive;font-size:1.5rem;color:var(--pur);margin:0}
+.btn{font:700 1rem "Comic Sans MS",cursive;background:var(--lime);border:3px solid var(--ink);border-radius:30px 8px 28px 10px;padding:9px 14px;box-shadow:4px 4px 0 var(--ink);cursor:pointer;animation:bnc 1.3s infinite;margin:4px}
+.btn.alt{background:var(--pink);color:#fff;animation-delay:.4s}.btn.pur{background:var(--pur);color:#fff}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+@keyframes bnc{50%{transform:translateY(-5px) rotate(-2deg)}}
+input,textarea{font:inherit;width:100%;padding:9px;border:3px solid var(--ink);border-radius:12px 4px 14px 4px;background:#fffbd0;margin:4px 0}
+.top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px}
+.fol{background:var(--pur);color:#fff;padding:6px 12px;border:3px solid var(--ink);border-radius:20px 5px 20px 5px;box-shadow:4px 4px 0 var(--ink);font-weight:900}
+#meter{position:sticky;top:0;z-index:50;background:#ff2d2d;color:#fff;border:3px solid var(--ink);border-radius:6px 22px 6px 22px;margin:6px;padding:4px 10px;font-weight:900;box-shadow:4px 4px 0 var(--ink)}
+#meter div{height:8px;background:#fff3;border-radius:8px;overflow:hidden}#meter i{display:block;height:100%;width:97%;background:repeating-linear-gradient(90deg,var(--ban) 0 10px,#fff 10px 20px)}
+.ring{position:relative;width:260px;height:260px;margin:10px auto;animation:spin 14s linear infinite}
+.ring button{position:absolute;left:105px;top:105px;width:56px;height:56px;border-radius:50%;border:4px solid var(--ink);font-size:1.7rem;background:linear-gradient(135deg,var(--pink),var(--ban));cursor:pointer;transform:rotate(var(--a)) translate(105px);box-shadow:3px 3px 0 var(--ink)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ph{position:relative;border:3px solid var(--ink);border-radius:14px;height:210px;display:grid;place-items:center;font-size:6rem;overflow:hidden;background:linear-gradient(135deg,var(--c1),var(--c2))}
+.ph img{width:100%;height:100%;object-fit:cover}
+.f-potato img{filter:sepia(1) contrast(1.6) brightness(.7) saturate(.4) blur(1px)}.f-blur img{filter:blur(8px)}.f-flip img{transform:rotate(180deg)}
+.f-glit img{filter:sepia(1) hue-rotate(290deg) saturate(3)}
+.f-glit::after{content:"✨ ✨ ✨";position:absolute;inset:0;font-size:2rem;letter-spacing:30px;background:repeating-linear-gradient(60deg,#fff6 0 6px,transparent 6px 14px);animation:gl .5s steps(2) infinite}
+@keyframes gl{50%{opacity:.3}}
+.banana{display:inline-flex;align-items:center;gap:6px;background:var(--ban);border:3px solid var(--ink);border-radius:30px;padding:4px 12px;font:900 1rem inherit;cursor:pointer;box-shadow:3px 3px 0 var(--ink);transition:transform .25s}
+.banana .sp{display:inline-block;font-size:1.6rem;animation:spin 1.2s linear infinite}
+.badges{display:flex;flex-wrap:wrap;gap:8px}.badge{background:var(--sky);border:3px dashed var(--ink);border-radius:50px 10px;padding:5px 10px;font-weight:700;transform:rotate(var(--r))}
+nav{position:fixed;bottom:6px;left:0;right:0;z-index:60;display:flex;flex-wrap:wrap;justify-content:center;pointer-events:none}
+nav .btn{pointer-events:auto;transform:rotate(var(--r));font-size:.85rem;padding:7px 10px}
+#mascot{position:fixed;left:6px;bottom:96px;z-index:70;text-align:center;font-size:.7rem;font-weight:700}
+.blob{width:74px;height:70px;background:var(--lime);border:4px solid var(--ink);border-radius:55% 45% 50% 50%/60% 55% 45% 40%;position:relative;animation:wob 2s infinite;box-shadow:4px 4px 0 var(--ink)}
+@keyframes wob{50%{border-radius:45% 55% 40% 60%/50% 45% 55% 50%;transform:scaleY(.93)}}
+.eye{position:absolute;top:14px;width:24px;height:24px;background:#fff;border:3px solid var(--ink);border-radius:50%}.eye:nth-child(1){left:8px}.eye:nth-child(2){right:8px}
+.eye b{position:absolute;left:5px;top:5px;width:10px;height:10px;background:var(--ink);border-radius:50%}
+.mouth{position:absolute;bottom:6px;left:0;right:0;font-size:1.3rem}
+#bubble{display:none;position:absolute;bottom:92px;left:0;width:190px;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:6px 8px;text-align:left;font-size:.8rem;box-shadow:3px 3px 0 var(--ink)}
+.ov{position:fixed;inset:0;background:#000a;z-index:100;display:grid;place-items:center;padding:12px;overflow:auto}
+.box{background:#fff;border:5px solid var(--ink);border-radius:30px 8px 30px 8px;box-shadow:8px 8px 0 var(--pink);padding:18px;max-width:440px;width:100%;max-height:92vh;overflow:auto}
+#toasts{position:fixed;top:60px;right:6px;width:min(280px,80vw);z-index:90;pointer-events:none}
+.toast{position:absolute;right:0;width:100%;background:#fff;border:3px solid var(--ink);border-radius:10px 20px;padding:8px 10px;font-weight:700;box-shadow:4px 4px 0 var(--pur);transform:rotate(var(--r));animation:pop .3s}
+@keyframes pop{from{transform:scale(0)}}
+.cf{position:fixed;top:-30px;z-index:200;pointer-events:none;animation:fall var(--d) linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+#load{position:fixed;inset:0;z-index:300;background:var(--pink);display:grid;place-items:center;text-align:center;color:#fff;font-weight:900;font-size:1.3rem}
+#load .bar{width:min(320px,80vw);height:30px;border:4px solid var(--ink);background:#fff;border-radius:20px;overflow:hidden;margin:12px auto}#load .bar i{display:block;height:100%;width:0;background:var(--lime)}
+.tcbox{height:140px;overflow:hidden;border:3px solid var(--ink);background:#fffbe0;font-size:.8rem;position:relative}.tcbox div{animation:tc 60s linear forwards}@keyframes tc{from{transform:translateY(140px)}to{transform:translateY(-100%)}}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.grid button{font-size:2.2rem;border:3px solid var(--ink);border-radius:10px;background:#eef;cursor:pointer}.grid .on{background:var(--ban)}
+.chatlog{height:120px;overflow:auto;background:#eaffd0;border:3px solid var(--ink);border-radius:10px;padding:6px;margin-bottom:6px}
+footer{font-size:7px;text-align:center;margin:30px 0}
+.calm *{animation:none!important;font-family:Arial,sans-serif!important;transform:none!important}
+.worse .card{animation-duration:.8s}
+@media (prefers-reduced-motion:reduce){.ring,.card{animation-duration:30s}}
+
+.arena{position:relative;height:200px;border:3px dashed var(--ink);border-radius:12px;background:#f0ffd8;overflow:hidden}
+.rbox{height:130px;display:grid;place-items:center;border:3px solid var(--ink);border-radius:14px;color:#fff;font-weight:900;font-size:1.3rem;cursor:pointer;user-select:none;text-align:center}
+#glist .btn{font-size:.95rem}
+body:not(.in) .home,body:not(.in) #nav{display:none!important}body.in #pageLogin{display:none}
+#pageLogin select{font:inherit;padding:6px;border:3px solid var(--ink);border-radius:10px}
+</style>
+</head>
+<body>
+<div id="load"><div><div>🍌 Flopgram</div><div class="bar"><i id="lbar"></i></div><div id="ltxt">Loading 0%</div></div></div>
+
+<div id="app">
+  <div class="card top">
+    <div><h1 id="logo">Flopgram</h1><p class="tag">Share your worst moments</p><small>0 friends online (they blocked you)</small></div>
+    <div class="fol">👥 Followers: <span id="fol">0</span></div>
+  </div>
+  <div id="meter">Terribleness: <span id="mt">97</span>%<div><i id="mb"></i></div></div>
+
+  <div class="card" id="pageLogin"><h2>Welcome back! (Nobody missed you) 👋</h2>
+    <small id="online">🟢 ... users online</small>
+    <input class="lag" id="lu" placeholder="Username (or email, or your mother's name)">
+    <input class="lag" id="lp" type="password" placeholder="Password (it's not 'password')">
+    <label><input type="checkbox" id="rem" checked style="width:auto"> Remember me (we won't)</label>
+    <div style="position:relative;height:64px"><button class="btn" id="lgo" style="position:absolute;left:0;top:6px">Log in</button></div>
+    <button class="btn alt" id="lface">🤡 Login with Face</button><button class="btn pur" id="lforgot">Forgot password?</button><button class="btn" id="lsign">Sign up</button>
+    <p>🌐 <select id="lang"><option>English</option><option>Pirate</option><option>Potato</option><option>Backwards</option></select></p>
+    <p id="lerr" style="color:#d00;font-weight:700"></p></div>
+
+  <div class="card home" id="stories"><h2>Stories (spinning, sorry)</h2><div class="ring" id="ring"></div></div>
+
+  <div class="card home" id="up"><h2>Post it. Regret it.</h2>
+    <input type="file" id="file" accept="image/*">
+    <textarea class="lag" data-fix rows="2" placeholder="Write a caption (it will arrive eventually)"></textarea>
+    <button class="btn" id="post" data-sw>Post</button><button class="btn alt" id="cancel" data-sw>Cancel</button>
+  </div>
+
+  <div id="feed" class="home"></div>
+
+    <div class="card home" id="games"><h2>🎮 Arcade of Despair</h2><p>Every game is 100% fair. (Sir Flops swears.)</p><div id="glist"></div>
+    <button class="btn pur" id="btt">⬆️ Back to top</button></div>
+
+  <div class="card home" id="feats"><h2>🧰 Normal Features™ (Ruined)</h2><p>Every feature you know, now with 100% more rage.</p><div id="flist"></div></div>
+
+  <div class="card home" id="profile"><h2>Your Profile 🧑‍🎤</h2>
+    <div id="who">Not logged in. Nobody noticed.</div>
+    <div id="vol" style="display:none"><p><b>🔊 Volume:</b> <span id="vv">30</span> <span id="vi">🔉</span></p>
+      <input type="range" id="vr" min="0" max="100" value="30"><small>Slide right to turn it up. Trust us.</small></div>
+    <h2 style="margin-top:12px">Achievements</h2><div class="badges" id="badges"></div>
+  </div>
+
+  <div class="card home" id="chat"><h2>Support Chat 🤖</h2><div class="chatlog" id="log"><div>Bot: How can I not help you?</div></div>
+    <input id="cin" placeholder="Describe your problem…"><button class="btn pur" id="csend">Send</button></div>
+
+  <footer>Best viewed in Internet Explorer 5.</footer>
+</div>
+
+<div id="toasts"></div>
+<div id="mascot"><div id="bubble"></div><div class="blob"><i class="eye"><b></b></i><i class="eye"><b></b></i><span class="mouth">◡</span></div>Sir Flops-a-Lot</div>
+<nav id="nav"></nav>
+
+<script>
+/* ============ CHAOS CONFIG — tune the terribleness here ============ */
+const CFG = {
+  followerDrop:[3,60], ghostReset:[-500,-5],     // follower loss range / negative reset range
+  reverseScrollMs:7000, tiltMs:4000, maxTilt:2, maxZoom:.08,
+  toastMs:5000, cookieMs:60000, cookieBoxes:5,   // every 60s, 5 boxes (use 20000 / 20 for full torture)
+  swapMs:2500, swapChance:.4, lagMs:1000, bananaChance:.15,
+  dodgeRadius:90, dodgesBeforeMercy:10,
+  deleteRounds:7, hackedAfterMs:30000, tcSeconds:60,
+  terribleStart:97, terribleMax:9000, terribleTickMs:600,
+  loadingMs:2200, calmMs:5000
+};
+/* ==================================================================== */
+const $=q=>document.querySelector(q), rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a, pick=a=>a[rnd(0,a.length-1)];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let calm=false, worse=1, reversed=false, loggedIn=false;
+
+/* ---------- Sir Flops-a-Lot: eyes + sarcasm ---------- */
+let bt; function flop(msg){const b=$('#bubble');b.textContent=msg;b.style.display='block';clearTimeout(bt);bt=setTimeout(()=>b.style.display='none',4500)}
+document.addEventListener('mousemove',e=>document.querySelectorAll('.eye').forEach(eye=>{
+  const r=eye.getBoundingClientRect(),a=Math.atan2(e.clientY-r.top-12,e.clientX-r.left-12);
+  eye.firstChild.style.transform=`translate(${Math.cos(a)*5}px,${Math.sin(a)*5}px)`}));
+const SASS=["Wow, bold choice.","Did you mean to do that? Bold.","I'd help, but I'm just a blob.","Error 418: I'm a flop.","Congratulations, you broke it.","Spectacular. Do it again."];
+
+/* ---------- confetti + toasts ---------- */
+function confetti(n=40){for(let i=0;i<n;i++){const s=document.createElement('span');s.className='cf';s.textContent=pick(['🎉','🍌','🧦','✨','💩','🥔']);
+  s.style.cssText=`left:${rnd(0,100)}vw;font-size:${rnd(16,34)}px;--d:${rnd(15,40)/10}s`;document.body.appendChild(s);setTimeout(()=>s.remove(),4200)}}
+const TOASTS=["Someone unfollowed you! 😢","Battery low! 🔋 (1% of nothing)","Someone unfollowed you! (it was your mom)","Battery low! Please feed it a banana"];
+function toast(t){if(calm)return;const d=document.createElement('div'),c=$('#toasts');d.className='toast';d.textContent=t;
+  d.style.cssText=`--r:${rnd(-4,4)}deg;top:${c.children.length*9}px;right:${rnd(0,14)}px`;c.appendChild(d);setTimeout(()=>d.remove(),14000)}
+setInterval(()=>toast(pick(TOASTS)),CFG.toastMs);
+
+/* ---------- followers drop (load, click, scroll) + ghost ---------- */
+let followers=rnd(900,1500),lastDrop=0;
+function drop(){if(calm)return;const was=followers;followers-=rnd(...CFG.followerDrop)*worse;
+  if(was>0&&followers<=0){flop("You are now a ghost 👻");toast("You are now a ghost 👻");followers=rnd(...CFG.ghostReset);confetti(30)}
+  $('#fol').textContent=followers}
+drop();document.addEventListener('click',drop);
+addEventListener('scroll',()=>{if(Date.now()-lastDrop>400){lastDrop=Date.now();drop()}});
+
+/* ---------- Bad-o-meter ---------- */
+let terr=CFG.terribleStart;
+setInterval(()=>{if(terr<CFG.terribleMax)terr=Math.min(CFG.terribleMax,terr+Math.ceil(terr*.02*rnd(1,3)));
+  $('#mt').textContent=terr+(terr>100?' (not a real number)':'');$('#mb').style.width=Math.min(100,terr)+'%'},CFG.terribleTickMs);
+
+/* ---------- scroll reversal every 7s (wheel + touch) ---------- */
+setInterval(()=>{if(calm)return;reversed=!reversed;toast(reversed?'Scroll direction: reversed 🙃':'Scroll direction: normal (for now)')},CFG.reverseScrollMs);
+addEventListener('wheel',e=>{if(reversed&&!calm){e.preventDefault();scrollBy(0,-e.deltaY)}},{passive:false});
+let ty=0;addEventListener('touchstart',e=>ty=e.touches[0].clientY,{passive:true});
+addEventListener('touchmove',e=>{const y=e.touches[0].clientY;if(reversed&&!calm){e.preventDefault();scrollBy(0,y-ty)}ty=y},{passive:false});
+
+/* ---------- random zoom + 2° tilt ---------- */
+setInterval(()=>{if(calm){$('#app').style.transform='none';return}
+  $('#app').style.transform=`scale(${1+(Math.random()*2-1)*CFG.maxZoom}) rotate(${(Math.random()*2-1)*CFG.maxTilt*worse}deg)`},CFG.tiltMs);
+
+/* ---------- wobbly logo letters ---------- */
+$('#logo').innerHTML=[...'Flopgram'].map(c=>`<span style="transform:rotate(${rnd(-9,9)}deg) translateY(${rnd(-4,4)}px)">${c}</span>`).join('');
+
+/* ---------- modal helper ---------- */
+function modal(html){const o=document.createElement('div');o.className='ov';o.innerHTML=`<div class="box">${html}</div>`;document.body.appendChild(o);return o}
+
+/* ---------- stories ring + viewers ---------- */
+['🍕','🐸','🧦','🦆','🤡','🥔'].forEach((e,i)=>{const b=document.createElement('button');b.textContent=e;b.style.setProperty('--a',i*60+'deg');
+  b.onclick=()=>{const m=modal(`<h2>👁️ Story viewers</h2><ul><li>Your crush 😍</li><li>Your teacher 👀</li><li>FBI Agent 🕵️</li><li>Your future self ⏳ (disappointed)</li></ul><button class="btn">Close</button>`);
+    m.querySelector('button').onclick=()=>m.remove();flop("Wow, bold choice.")};$('#ring').appendChild(b)});
+
+/* ---------- feed with dodging banana likes ---------- */
+const POSTS=[["🥔","Me at 3 AM, regretting everything","#ff9ad5","#ffe135"],["🪑","My chair, but sad","#b6ff3c","#8a2be2"],["🍞","Toast. Just toast.","#9be7ff","#ffc9a8"]];
+function bananaHTML(){return `<button class="banana"><span class="sp">🍌</span><b class="lab">Bananas</b>: <b class="n">${rnd(3,99)}</b></button>`}
+function addCard(inner,cap,top){const d=document.createElement('div');d.className='card';d.innerHTML=`${inner}<p>${cap}</p>${bananaHTML()}`;
+  const b=d.querySelector('.banana');b._st={mode:'like',dodges:0};b.onclick=()=>likeClick(b);top?$('#feed').prepend(d):$('#feed').append(d)}
+POSTS.forEach(p=>addCard(`<div class="ph" style="--c1:${p[2]};--c2:${p[3]}">${p[0]}</div>`,p[1]));
+function likeClick(b){const s=b._st,n=b.querySelector('.n');if(s.mode!=='like')return;
+  s.mode='wait';n.textContent=+n.textContent+1;flop("Liked! Enjoy it. 2 seconds left.");confetti(15);
+  setTimeout(()=>{s.mode='dis';b.querySelector('.sp').textContent='👎';b.querySelector('.lab').textContent='Dislikes';n.textContent=+n.textContent-5;flop("Plot twist. 👎")},2000)}
+document.addEventListener('mousemove',e=>document.querySelectorAll('.banana').forEach(b=>{
+  const s=b._st;if(s.mode!=='like'||s.dodges>=CFG.dodgesBeforeMercy||calm)return;
+  const r=b.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);
+  if(Math.hypot(dx,dy)<CFG.dodgeRadius){s.dodges++;b.style.transform=`translate(${rnd(-110,110)}px,${rnd(-50,50)}px)`;if(s.dodges===CFG.dodgesBeforeMercy)flop("Fine. I'm tired. Click me.")}}));
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('.banana');if(b&&b._st.mode==='like'&&b._st.dodges<3&&e.pointerType!=='mouse'){b._st.dodges++;b.style.transform=`translate(${rnd(-90,90)}px,${rnd(-30,30)}px)`;e.preventDefault()}});
+
+/* ---------- upload with a random terrible filter ---------- */
+const FILTERS=[['f-potato','Potato 🥔'],['f-blur','Blurry 🌫️'],['f-flip','Upside-down 🙃'],['f-glit','Sepia glitter ✨']];
+let pending=null;
+$('#file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{pending=r.result;flop("Oh, a photo. Let me ruin it.")};r.readAsDataURL(f)};
+$('#post').onclick=()=>{const cap=$('#up textarea')._buf||'(no caption, no hope)';const [cls,name]=pick(FILTERS);
+  addCard(`<div class="ph ${cls}">${pending?`<img src="${pending}" alt="">`:'📷'}</div><small>Filter: ${name} (cannot be removed)</small>`,cap.replace(/</g,'&lt;'),true);
+  pending=null;confetti(25);flop(pick(SASS));$('#up textarea').value='';$('#up textarea')._buf='';$('#up textarea')._shown=''};
+$('#cancel').onclick=()=>{pending=null;$('#file').value='';flop("Cancelled. Or posted. Who knows.")};
+
+/* ---------- typing lag (1s) + banana autocorrect ---------- */
+document.querySelectorAll('.lag').forEach(el=>{el._buf='';el._shown='';let t;
+  el.addEventListener('beforeinput',e=>{e.preventDefault();
+    if(e.inputType.startsWith('delete'))el._buf=el._buf.slice(0,-1);
+    else if(e.data){el._buf+=e.data;if(el.dataset.fix!==undefined&&e.data===' ')el._buf=el._buf.replace(/(\w{3,}) $/,(m)=>Math.random()<CFG.bananaChance?'banana ':m)}
+    clearTimeout(t);t=setTimeout(()=>{el._shown=el._buf;el.value=el._buf},calm?0:CFG.lagMs)})});
+
+/* ---------- labels randomly swap (Post <-> Cancel) ---------- */
+setInterval(()=>{if(calm||Math.random()>CFG.swapChance)return;const [a,b]=document.querySelectorAll('[data-sw]');if(a&&b){const t=a.textContent;a.textContent=b.textContent;b.textContent=t}},CFG.swapMs);
+
+/* ---------- achievements ---------- */
+["🏆 Lost 1000 followers in a day!","🥔 Posted a potato. Twice.","🍌 Chased by a banana","👻 Became a ghost","🧦 Fell for the sock ad","📉 Negative friends unlocked"].forEach(t=>{
+  const s=document.createElement('span');s.className='badge';s.style.setProperty('--r',rnd(-5,5)+'deg');s.textContent=t;$('#badges').appendChild(s)});
+
+/* ---------- login/signup: password rules, captcha, T&C ---------- */
+const POKE=['pikachu','bulbasaur','charmander','squirtle','eevee','snorlax','mewtwo','jigglypuff','psyduck','magikarp','gengar','togepi'];
+function revDate(){const d=new Date(),p=n=>String(n).padStart(2,'0');return (p(d.getDate())+p(d.getMonth()+1)+d.getFullYear()).split('').reverse().join('')}
+function signup(){
+  const m=modal(`<h2>Sign up 📝</h2><input class="lag" id="su" placeholder="Username"><input class="lag" id="pw" type="password" placeholder="Password (good luck)">
+   <p id="err" style="color:#d00;font-weight:700"></p><button class="btn" id="go">Create regret</button><button class="btn alt" id="x">Run away</button>`);
+  m.querySelectorAll('.lag').forEach(el=>{el._buf='';let t;el.addEventListener('beforeinput',e=>{e.preventDefault();
+    if(e.inputType.startsWith('delete'))el._buf=el._buf.slice(0,-1);else if(e.data)el._buf+=e.data;
+    clearTimeout(t);t=setTimeout(()=>el.value=el.type==='password'?'•'.repeat(el._buf.length):el._buf,CFG.lagMs)})});
+  m.querySelector('#x').onclick=()=>m.remove();
+  m.querySelector('#go').onclick=()=>{const p=m.querySelector('#pw')._buf,u=m.querySelector('#su')._buf||'Anonymous';let e='';
+    if(!/[A-Z]/.test(p))e="No uppercase letter. Even your keyboard is embarrassed for you.";
+    else if(!/\d/.test(p))e="No number. Counting isn't your thing, is it?";
+    else if(!/[^A-Za-z0-9]/.test(p))e="No symbol. How wonderfully bland.";
+    else if(!POKE.some(x=>p.toLowerCase().includes(x)))e="No Pokémon. Pikachu is quietly disappointed.";
+    else if(!p.includes(revDate()))e="Today's date backwards is missing (DDMMYYYY, reversed). Time flows the other way, genius.";
+    m.querySelector('#err').textContent=e;if(e){flop(e);return}captcha(m,u)}}
+function captcha(m,u){let fails=0;
+  m.firstChild.innerHTML=`<h2>Select all images with regret 😔</h2><div class="grid">${['😭','🙂','🤡','🚲','🫠','🍕','🧦','😬','🦆'].map(e=>`<button>${e}</button>`).join('')}</div><p id="cm"></p><button class="btn" id="vf">Verify</button>`;
+  m.querySelectorAll('.grid button').forEach(b=>b.onclick=()=>b.classList.toggle('on'));
+  m.querySelector('#vf').onclick=()=>{fails++;confetti(20);const msg=["Wrong. Regret isn't a picture.","Wrong again. Regret is a feeling.","Still wrong. You picked correctly, which is the problem."][Math.min(fails-1,2)];
+    m.querySelector('#cm').textContent=msg;flop(msg);if(fails>=3){m.querySelector('#cm').textContent="Fine. You're a robot with feelings. Proceed.";setTimeout(()=>terms(m,u),1200)}}}
+function terms(m,u){let sec=CFG.tcSeconds,dodge=0;
+  m.firstChild.innerHTML=`<h2>Terms & Conditions 📜</h2><div class="tcbox"><div>By using Flopgram you agree that your cat is a cookie, your selfies belong to a potato, and every like is a banana. You agree to lose followers. You agree to read this entire scroll. You agree that socks are not a scam. You agree to be judged by a blob. Section 7: See Section 7. Section 8: ${'blah '.repeat(60)} The end. Mostly.</div></div>
+   <p>Reading… <b id="s">${sec}</b>s left</p><div style="height:60px;position:relative"><label id="cb" style="position:absolute;left:0;top:10px"><input type="checkbox" id="ok" disabled style="width:auto"> I read it all, I swear</label></div><button class="btn" id="fin" disabled>Done</button>`;
+  const iv=setInterval(()=>{sec--;m.querySelector('#s').textContent=sec;if(sec<=0){clearInterval(iv);m.querySelector('#ok').disabled=false;flop("Finally. Now catch the checkbox.")}},1000);
+  const cb=m.querySelector('#cb');cb.onmouseenter=()=>{if(sec<=0&&dodge<5){dodge++;cb.style.left=rnd(0,60)+'%';cb.style.top=rnd(0,35)+'px'}};
+  m.querySelector('#ok').onchange=e=>m.querySelector('#fin').disabled=!e.target.checked;
+  m.querySelector('#fin').onclick=()=>{clearInterval(iv);m.remove();login(u)}}
+function login(u){loggedIn=true;document.body.classList.add('in');scrollTo(0,0);$('#who').innerHTML=`Welcome, <b>${u.replace(/</g,'&lt;')}</b>! You have 0 friends. 🎉`;$('#vol').style.display='block';confetti(60);flop("Logged in. Try the volume slider.")}
+$('#vr').oninput=e=>{const v=100-e.target.value;$('#vv').textContent=v;$('#vi').textContent=v>66?'🔊':v>33?'🔉':v>0?'🔈':'🔇';
+  flop(v===0?"Volume is now 11. Which is silent. That's how 11 works.":"Volume up! (We heard 'down'.)")};
+
+/* ---------- delete account: 7 × Are you sure? (Yes/No swapped) ---------- */
+function del(){let n=0;const m=modal(`<h2 id="q"></h2><div id="bs"></div>`);
+  (function round(){if(n>=CFG.deleteRounds){m.remove();flop("Account deleted! Just kidding, logging you back in.");login('Zombie');return}
+    n++;const sw=n%2===0;m.querySelector('#q').textContent=`Are you sure? (${n}/${CFG.deleteRounds})`;
+    m.querySelector('#bs').innerHTML=`<button class="btn">${sw?'No':'Yes'}</button><button class="btn alt">${sw?'Yes':'No'}</button>`;
+    m.querySelectorAll('#bs button').forEach(b=>b.onclick=round)})()}
+
+/* ---------- cookie popup (20 mandatory boxes, returns every 20s) ---------- */
+const COOKIES=["I agree my cat is a cookie","I accept all cookies, crumbs and feelings","I consent to being tracked by a duck","I waive my right to a snack","I agree the moon is a cookie","I accept that cookies accept me","I agree to read nothing","I consent to be judged by a blob","I agree bananas have rights","I swear I'm not a robot (I'm a toaster)","I accept the smell of toast","I agree to lose followers","I allow socks to follow me","I agree gravity is optional","I accept Terms I haven't seen","I consent to wobbly borders","I agree Monday is a cookie","I accept that potatoes are art","I agree to click 'Accept' twice","I agree to all 20 of these"];
+let cookieOpen=false;
+function cookies(){if(cookieOpen||calm)return;cookieOpen=true;
+  const m=modal(`<h2>🍪 Cookies (mandatory)</h2>${COOKIES.slice(0,CFG.cookieBoxes).map(t=>`<label style="display:block;margin:3px 0"><input type="checkbox" style="width:auto"> ${t}</label>`).join('')}<button class="btn" id="ac" disabled>Accept</button>`);
+  const upd=()=>m.querySelector('#ac').disabled=![...m.querySelectorAll('input')].every(i=>i.checked);m.querySelectorAll('input').forEach(i=>i.onchange=upd);
+  m.querySelector('#ac').onclick=()=>{m.remove();cookieOpen=false;confetti(20);flop("Thanks. We ate them all.")}}
+setTimeout(cookies,10000);setInterval(cookies,CFG.cookieMs);
+
+/* ---------- chatbot ---------- */
+function send(){const v=$('#cin').value.trim();if(!v)return;const l=$('#log');l.innerHTML+=`<div>You: ${v.replace(/</g,'&lt;')}</div>`;$('#cin').value='';
+  setTimeout(()=>{l.innerHTML+=`<div>Bot: ${Math.random()<.25?'No.':'Have you tried turning it off and on again?'}</div>`;l.scrollTop=l.scrollHeight},500)}
+$('#csend').onclick=send;$('#cin').onkeydown=e=>{if(e.key==='Enter')send()};
+
+/* ---------- hacked alert = sock ad ---------- */
+function hacked(){const m=modal(`<h2 style="color:#d00">⚠️ YOUR ACCOUNT WAS HACKED ⚠️</h2><p>Hackers are inside your feed! Act now!</p><button class="btn alt" id="fix">FIX IT NOW</button>`);
+  m.querySelector('#fix').onclick=()=>{m.firstChild.innerHTML=`<h2>🧦 PSYCH! 🧦</h2><p>You weren't hacked. But your ankles are <i>naked</i>.</p><p><b>SUPER SOCKS — 90% off!</b></p><button class="btn pur">Buy socks</button><button class="btn">No thanks</button>`;
+    m.querySelectorAll('button').forEach(b=>b.onclick=()=>{m.remove();confetti(30)})}}
+setTimeout(hacked,CFG.hackedAfterMs);
+
+/* ---------- back button, right click, J key, Konami ---------- */
+const PAGES=["404½: The Sock Dimension 🧦","Page of Shame 📜","The Banana Void 🍌","Settings (just a mirror) 🪞","Your Mom's Feed 👩"];
+history.pushState({},'');history.pushState({},'');
+addEventListener('popstate',()=>{history.pushState({},'');const t=pick(PAGES);const m=modal(`<h2>${t}</h2><p>You pressed Back. We took you somewhere else.</p><button class="btn">Okay…</button>`);
+  m.querySelector('button').onclick=()=>m.remove();document.querySelectorAll('.card')[rnd(0,3)].scrollIntoView({behavior:'smooth'})});
+addEventListener('contextmenu',e=>{e.preventDefault();flop("Nice try.");toast("Nice try. 🙅")});
+const JUDGE=["Followers drop on load/click/scroll + ghost reset","Rotating banana like that dodges, then dislikes","Scroll reverses every 7s; random zoom/2° tilt","Fake loading: 99% → 12% → 'Just kidding'","20-checkbox cookie popup returns every 20s","Stacking fake unfollow/battery toasts","Delete Account ×7 with Yes/No swapped","Story viewers: crush, teacher, FBI, future self","Random terrible photo filters","Chatbot: turn it off and on again / 'No.'","Signup password with Pokémon + reversed date","Captcha 'images with regret' always fails","60-second T&C with a moving checkbox","Buttons swap labels (Post ↔ Cancel)","1-second typing lag + banana autocorrect","Fake hack alert that's a sock ad","Back button opens random page; right-click 'Nice try.'","Bad-o-meter climbs to 9000%","Panic button = more confetti","Fake achievement badges","Konami code: 5 seconds of normal, then worse","J key = this Judge Mode","Footer: Best viewed in Internet Explorer 5","Page 1: login with a dodging button, wrong-password trolling, face login, forgot-password quiz","Normal Features™ ruined: search, notifications, dark mode, settings, comments, follow, share, edit profile, logout, fortune","Bonus: login → volume slider that works backwards","Arcade: 6 rigged games (whack, banana, RPS, guess, reaction, stay-still)","Rate us (5 stars = 1 star), Are-you-still-there, sad tab title, Back-to-top goes down"];
+addEventListener('keydown',e=>{if(/INPUT|TEXTAREA/.test(document.activeElement.tagName))return;
+  if(e.key.toLowerCase()==='j'){const m=modal(`<h2>⚖️ Judge Mode</h2>${JUDGE.map(t=>`<label style="display:block"><input type="checkbox" checked style="width:auto"> ${t}</label>`).join('')}<button class="btn">Close</button>`);m.querySelector('button').onclick=()=>m.remove()}});
+const KON=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];let ki=0;
+addEventListener('keydown',e=>{ki=(e.key===KON[ki]||e.key.toLowerCase()===KON[ki])?ki+1:0;
+  if(ki===KON.length){ki=0;calm=true;document.body.classList.add('calm');$('#app').style.transform='none';flop("Everything is normal. Suspicious.");
+    setTimeout(()=>{calm=false;worse=2;document.body.classList.remove('calm');document.body.classList.add('worse');flop("Normal's over. It's worse now. 😈");confetti(80)},CFG.calmMs)}});
+
+
+/* ---------- ARCADE OF DESPAIR: rigged mini-games ---------- */
+function badge(t){const s=document.createElement('span');s.className='badge';s.style.setProperty('--r',rnd(-5,5)+'deg');s.textContent=t;$('#badges').appendChild(s);toast("🏅 Achievement: "+t)}
+const stopG=m=>{(m._t||[]).forEach(clearInterval);(m._off||[]).forEach(f=>f())};
+const GAMES={
+ 'Whack-a-Follower 🔨':(m,g)=>{let s=0,t=15,cur=-1; // hitting a mole costs you points AND real followers
+  g.innerHTML=`<h2>Whack-a-Follower 🔨</h2><p>Score: <b id="sc">0</b> · <b id="tm">15</b>s</p><div class="grid">${'<button></button>'.repeat(9)}</div>`;
+  const c=[...g.querySelectorAll('.grid button')],sc=()=>g.querySelector('#sc').textContent=s;
+  const show=()=>{c.forEach(b=>b.textContent='');cur=rnd(0,8);c[cur].textContent='🧑'};show();
+  c.forEach((b,i)=>b.onpointerdown=()=>{if(i===cur){s-=rnd(2,6);followers-=15;$('#fol').textContent=followers;flop("You whacked a follower. They left.")}else s-=1;sc();show()});
+  m._t.push(setInterval(show,550),setInterval(()=>{g.querySelector('#tm').textContent=--t;if(t<=0){stopG(m);g.querySelector('.grid').outerHTML=`<p><b>FINAL: ${s} points.</b> Rank: Potato 🥔</p>`;badge("🔨 Whacked "+Math.abs(s)+" followers")}},1000))},
+ 'Catch the Banana 🍌':(m,g)=>{let c=0; // banana dodges 90% of hovers
+  g.innerHTML=`<h2>Catch the Banana 🍌</h2><p>Catch it 3 times. Easy.</p><div class="arena"><button class="btn" id="bn" style="position:absolute;left:40%;top:40%">🍌 catch me</button></div><p id="bm"></p>`;
+  const b=g.querySelector('#bn'),mv=()=>{b.style.left=rnd(0,62)+'%';b.style.top=rnd(0,75)+'%'};
+  b.onpointerenter=()=>{if(Math.random()<.9)mv()};
+  b.onclick=()=>{c++;g.querySelector('#bm').textContent=c>=3?"You win! Prize: 0 bananas. 🏆":`Caught ${c}/3. Now it's faster.`;if(c<3)mv();else{badge("🍌 Caught the uncatchable");confetti(60)}}},
+ 'Rock Paper Scissors ✊':(m,g)=>{let l=0;const E=['✊','✋','✌️'],W={'✊':'✋','✋':'✌️','✌️':'✊'}; // the bot always wins
+  g.innerHTML=`<h2>Rock Paper Scissors ✊</h2><div>${E.map(e=>`<button class="btn" style="font-size:2rem">${e}</button>`).join('')}</div><p id="rm">Choose wisely.</p>`;
+  g.querySelectorAll('.btn').forEach(b=>b.onclick=()=>{l++;g.querySelector('#rm').textContent=`You ${b.textContent} vs Me ${W[b.textContent]} — I win! (Loss #${l}. I saw your hand. Cheating is a feature.)`;
+   if(l===5){flop("Best of 5 is now best of 50.");badge("✊ Lost at RPS ×5")}})},
+ 'Guess the Number 🔢':(m,g)=>{let n=0; // hints are lies, the number moves
+  g.innerHTML=`<h2>Guess the Number 🔢</h2><p>Pick 1–10.</p><div class="grid">${[1,2,3,4,5,6,7,8,9,10].map(i=>`<button>${i}</button>`).join('')}</div><p id="gm"></p>`;
+  g.querySelectorAll('.grid button').forEach(b=>b.onclick=()=>{n++;g.querySelector('#gm').textContent=`Guess #${n}: `+(Math.random()<.08?"YOU WIN! …just kidding. The number moved.":pick(["Higher!","Lower!","Close! (Not really.)","Colder. Warmer. Soup.","Wrong, but with confidence."]));if(n===7)badge("🔢 7 wrong guesses")})},
+ 'Reaction Test ⚡':(m,g)=>{let tries=0; // always "Too early!" until try 4
+  g.innerHTML=`<h2>Reaction Test ⚡</h2><div id="rb" class="rbox" style="background:#f33">Wait for green…</div><p id="rt"></p>`;
+  const r=g.querySelector('#rb');
+  const arm=()=>{r.style.background='#f33';r.textContent='Wait for green…';m._t.push(setTimeout(()=>{r.style.background='#3c3';r.textContent='CLICK NOW!!';m._t.push(setTimeout(()=>{r.style.background='#f33';r.textContent="Too slow. Green's over."},300))},rnd(1500,3500)))};
+  r.onclick=()=>{tries++;g.querySelector('#rt').textContent=tries>=4?"Your time: -3 ms. You are faster than time. We don't believe you.":"Too early!";if(tries<4)arm();else badge("⚡ Faster than time")};arm()},
+ 'Stay Still 🧘':(m,g)=>{let p=0; // any mouse twitch resets; winning is still a fail
+  g.innerHTML=`<h2>Stay Still 🧘</h2><p>Don't move your mouse for 5 seconds.</p><div class="rbox" style="background:#999"><span><b id="sp">0.0</b>s</span></div><p id="sm"></p>`;
+  const mm=()=>{p=0;g.querySelector('#sm').textContent=pick(["You moved. I saw.","Twitch detected.","Did your cursor just sneeze?"])};
+  document.addEventListener('mousemove',mm);m._off=[()=>document.removeEventListener('mousemove',mm)];
+  m._t.push(setInterval(()=>{p+=.1;g.querySelector('#sp').textContent=p.toFixed(1);if(Math.abs(p-3)<.05)toast("Battery low! 🔋 (move your mouse to check)");
+   if(p>=5){stopG(m);g.querySelector('#sm').textContent=pick(["5.0s! But you blinked. Fail.","You won! …your soul twitched. Fail."]);badge("🧘 Failed stillness")}},100))}
+};
+function game(name){const m=modal(`<div id="gb"></div><button class="btn alt" id="gx">Rage quit</button>`);m._t=[];
+  m.querySelector('#gx').onclick=()=>{stopG(m);m.remove();flop(pick(["Rage quit detected. Classic.","Quitters never win. Neither do you, though."]))};
+  (GAMES[name]||FEATS[name])(m,m.querySelector('#gb'))}
+Object.keys(GAMES).forEach(n=>{const b=document.createElement('button');b.className='btn'+(rnd(0,1)?' alt':'');b.textContent=n;b.onclick=()=>game(n);$('#glist').appendChild(b)});
+$('#btt').onclick=()=>{scrollTo({top:document.body.scrollHeight,behavior:'smooth'});flop("Top is down there now.")};
+
+/* ---------- more rage-bait: rate us, are-you-still-there, sad tab title ---------- */
+function rate(){const m=modal(`<h2>Enjoying Flopgram? ⭐</h2><p>Rate us 5 stars!</p><div id="st"></div>`);
+  for(let i=1;i<=5;i++){const b=document.createElement('button');b.className='btn';b.textContent='⭐';
+    b.onpointerenter=()=>{if(i>1&&Math.random()<.7)b.style.transform=`translate(${rnd(-50,50)}px,${rnd(-30,30)}px)`};
+    b.onclick=()=>{m.firstChild.innerHTML=`<h2>Thanks for your 1 star! 🌟</h2><p>You clicked ${i}. We recorded 1. Feedback is a gift.</p><button class="btn">Okay</button>`;m.querySelector('button').onclick=()=>m.remove();confetti(30)};
+    m.querySelector('#st').appendChild(b)}}
+setInterval(()=>{if(!calm&&!document.querySelector('.ov'))rate()},45000);
+let lastAct=Date.now(),idleOpen=false;['mousemove','keydown','touchstart'].forEach(ev=>addEventListener(ev,()=>lastAct=Date.now()));
+setInterval(()=>{if(idleOpen||calm||document.querySelector('.ov')||Date.now()-lastAct<25000)return;idleOpen=true;
+  const m=modal(`<h2>Are you still there? 👀</h2><p>Click OK to prove you're alive.</p><button class="btn" id="okb" style="position:relative">OK</button>`);let d=0;const b=m.querySelector('#okb');
+  b.onpointerenter=()=>{if(d<4){d++;b.style.left=rnd(-80,80)+'px';b.style.top=rnd(-40,40)+'px'}};
+  b.onclick=()=>{m.remove();idleOpen=false;lastAct=Date.now();flop("Alive. Allegedly.")}},5000);
+document.addEventListener('visibilitychange',()=>{document.title=document.hidden?'Come back 😭 we miss your followers':'Flopgram — Share your worst moments'});
+
+
+/* ---------- PAGE 1: rage-bait login ---------- */
+let ltries=0,ldg=0;const lgo=$('#lgo');
+function loadThen(fn){const m=modal(`<h2>Checking password with the potato… 🥔</h2><div class="rbox" style="background:#eee;height:30px"><i id="pb" style="display:block;height:100%;width:0;background:var(--lime)"></i></div>`);let v=0;
+  const iv=setInterval(()=>{v+=rnd(2,9);m.querySelector('#pb').style.width=Math.min(v,99)+'%';if(v>=110){clearInterval(iv);m.remove();fn()}},120)}
+lgo.onpointerenter=()=>{if(ldg<6){ldg++;lgo.style.left=rnd(0,65)+'%';lgo.style.top=rnd(0,24)+'px'}};
+lgo.onclick=()=>{const u=$('#lu')._buf||'',e=$('#lerr');ltries++;
+  if(!u)e.textContent="Username is empty. Like your feed.";
+  else if(ltries<3)e.textContent=["Wrong password. Hint: it's not that.","Wrong again. It was right yesterday. We changed it."][ltries-1];
+  else{e.textContent='';loadThen(()=>login(u))}
+  if(e.textContent)flop(e.textContent)};
+setInterval(()=>{$('#rem').checked=false},2000);
+setInterval(()=>$('#online').textContent=`🟢 ${rnd(1,9)}0,${rnd(100,999)} users online (98% bots, 2% your mom)`,1500);
+$('#lsign').onclick=signup;
+$('#lang').onchange=e=>{const l=e.target.value;document.querySelectorAll('h2').forEach(h=>{h.dataset.o=h.dataset.o||h.textContent;const o=h.dataset.o;
+  h.textContent=l==='Backwards'?[...o].reverse().join(''):l==='Pirate'?'Arrr! '+o:l==='Potato'?'🥔 '+o.replace(/[aeiou]/gi,'o'):o})};
+$('#lface').onclick=()=>{let n=0;const m=modal(`<h2>🤡 Face Login</h2><div class="rbox" style="background:#555;font-size:4rem">🧑‍🦲</div><p id="fm">Scanning…</p><button class="btn" id="fs">Scan again</button>`);
+  const f=m.querySelector('#fm'),scan=()=>{n++;f.textContent='Scanning…';setTimeout(()=>{if(n<3)f.textContent=pick(["Face rejected: too tired.","Face rejected: looks like a potato.","Face rejected: your face is lying."]);
+    else{f.textContent="Face accepted! (It's a potato face.)";setTimeout(()=>{m.remove();login('Potato Face')},1200)}},1200)};
+  m.querySelector('#fs').onclick=scan;scan()};
+$('#lforgot').onclick=()=>{const Q=["What's your mother's maiden name's favorite sock color?","How many bananas did you eat in a past life?","Type the sound a potato makes."];let i=0;
+  const m=modal(`<h2>Forgot password 🔑</h2><p id="fq"></p><input id="fa"><button class="btn" id="fn">Next</button>`);
+  const q=()=>{m.querySelector('#fq').textContent=Q[i];m.querySelector('#fa').value=''};q();
+  m.querySelector('#fn').onclick=()=>{i++;flop(pick(["Wrong. Hint: it was sock-colored.","Incorrect. The potato disagrees."]));
+    if(i<Q.length)q();else{m.firstChild.innerHTML=`<h2>Password reset ✅</h2><p>Your new password was sent to <b>/dev/null</b>. It is: <b>banana</b>. Please change it to something more banana.</p><button class="btn">Ok</button>`;m.querySelector('button').onclick=()=>m.remove()}}};
+
+/* ---------- PAGE 2: Normal Features™, ruined ---------- */
+const FEATS={
+ '🔍 Search':(m,g)=>{g.innerHTML=`<h2>Search 🔍</h2><input id="sq" placeholder="Search anything"><button class="btn" id="sg">Search</button><div id="sr"></div>`;
+  g.querySelector('#sg').onclick=()=>{const q=(g.querySelector('#sq').value||'nothing').replace(/</g,'&lt;'),r=g.querySelector('#sr');r.textContent='Searching… (takes a while)';
+   setTimeout(()=>r.innerHTML=`<p>No results for "${q}". Did you mean <b>banana</b>?</p><ul><li>🍌 Banana (98%)</li><li>🥔 Potato</li><li>👻 Your ex's profile</li></ul>`,2500)}},
+ '🔔 Notifications':(m,g)=>{let n=3;const w=()=>{g.innerHTML=`<h2>Notifications 🔔</h2>${Array.from({length:n},()=>`<p>• ${pick(["Nobody liked your post","0 new notifications","Your potato was unfollowed","FBI Agent viewed your profile"])}</p>`).join('')}<button class="btn">Mark all as read</button>`;
+   g.querySelector('button').onclick=()=>{n+=3;flop("Marked as read. Now there are more.");w()}};w()},
+ '🌙 Dark mode':(m,g)=>{g.innerHTML=`<h2>Dark mode 🌙</h2><button class="btn pur" id="dm">Turn on dark mode</button>`;
+  g.querySelector('#dm').onclick=()=>{document.body.style.filter='brightness(3) contrast(.4)';flop("Dark mode enabled! (Eyes: gone.)");setTimeout(()=>document.body.style.filter='',2500)}},
+ '⚙️ Settings':(m,g)=>{g.innerHTML=`<h2>Settings ⚙️</h2>${['Notifications','Privacy','Sound','Location','Chaos'].map(t=>`<label style="display:block;margin:6px"><input type="checkbox" style="width:auto"> ${t}</label>`).join('')}<p>Toggles control other toggles. Good luck.</p>`;
+  const cs=[...g.querySelectorAll('input')];cs.forEach(c=>c.onchange=()=>{const o=pick(cs.filter(x=>x!==c));o.checked=!o.checked;flop("You touched one. I flipped another.")})},
+ '💬 Comment':(m,g)=>{g.innerHTML=`<h2>Leave a comment 💬</h2><input id="cm1" placeholder="Be nice…"><button class="btn" id="cp">Comment</button><div id="cl"></div>`;
+  g.querySelector('#cp').onclick=()=>{const i=g.querySelector('#cm1'),v=i.value.replace(/</g,'&lt;')||'…';g.querySelector('#cl').innerHTML+=`<p>You: ${v} <i>(edited by Sir Flops: "${pick(['…and I love bananas','…but my cat is a cookie','…please send help'])}")</i></p>`;i.value=''}},
+ '👥 Follow':(m,g)=>{g.innerHTML=`<h2>Suggested for you 👥</h2>${['Your crush','Your teacher','FBI Agent'].map(t=>`<p>${t} <button class="btn">Follow</button></p>`).join('')}`;
+  g.querySelectorAll('.btn').forEach(b=>b.onclick=()=>{b.textContent=pick(['Blocked you','Unfollowed you back','Seen 👀']);followers-=rnd(5,25);$('#fol').textContent=followers})},
+ '📤 Share':(m,g)=>{g.innerHTML=`<h2>Share with 📤</h2>${['Your mom','Your teacher','FBI Agent','Your crush'].map(t=>`<label style="display:block"><input type="checkbox" checked style="width:auto"> ${t}</label>`).join('')}<button class="btn" id="sh">Share</button>`;
+  g.querySelectorAll('input').forEach(i=>i.onchange=()=>{i.checked=true;flop("Un-sharing is a premium feature.")});g.querySelector('#sh').onclick=()=>{confetti(60);flop("Shared with everyone. Including your crush.")}},
+ '✏️ Edit profile':(m,g)=>{g.innerHTML=`<h2>Edit profile ✏️</h2><input id="en" placeholder="New name"><button class="btn" id="es">Save</button>`;
+  const i=g.querySelector('#en');i.oninput=()=>setTimeout(()=>i.value='Potato '+rnd(1,999),1200);
+  g.querySelector('#es').onclick=()=>{$('#who').innerHTML='Welcome, <b>'+i.value.replace(/</g,'&lt;')+'</b>!';flop("Saved to /dev/null. Enjoy your new name.")}},
+ '🔮 Fortune':(m,g)=>{g.innerHTML=`<h2>Fortune Teller 🔮</h2><button class="btn pur" id="ft">Reveal my future</button><p id="fp"></p>`;
+  g.querySelector('#ft').onclick=()=>{g.querySelector('#fp').textContent=pick(["You will lose 40 followers by Tuesday.","A banana will betray you.","You will click 'Accept' on something terrible.","Your cat is, in fact, a cookie."])}}
+};
+Object.keys(FEATS).forEach(n=>{const b=document.createElement('button');b.className='btn'+(rnd(0,1)?' alt':'');b.textContent=n;b.onclick=()=>game(n);$('#flist').appendChild(b)});
+
+/* ---------- floating nav pile ---------- */
+[['🏠 Home',()=>scrollTo({top:0,behavior:'smooth'})],['📸 Post',()=>$('#up').scrollIntoView({behavior:'smooth'})],['🚪 Logout',()=>flop('Hold the button. Longer. LONGER.')],['🎮 Games',()=>$('#games').scrollIntoView({behavior:'smooth'})],['💬 Chat',()=>$('#chat').scrollIntoView({behavior:'smooth'})],['🗑️ Delete',del],['😱 PANIC',()=>{confetti(120);flop("Panicking more efficiently now!")}]].forEach(([t,f],i)=>{
+  const b=document.createElement('button');b.className='btn'+(i%2?' alt':'');b.textContent=t;b.style.setProperty('--r',rnd(-8,8)+'deg');b.onclick=f;$('#nav').appendChild(b)});
+
+const lo=[...document.querySelectorAll('#nav button')].find(b=>b.textContent.includes('Logout'));let lt;
+lo.textContent='🚪 Hold 4s to Logout';lo.onclick=null;lo.onpointerdown=()=>{flop("Keep holding… keep holding…");lt=setTimeout(()=>{document.body.classList.remove('in');ltries=0;$('#lerr').textContent="Logged out. Your password was wrong anyway.";scrollTo(0,0)},4000)};
+lo.onpointerup=lo.onpointerleave=()=>clearTimeout(lt);
+
+/* ---------- fake loading screen: 99% → 12% → "Just kidding" → again ---------- */
+async function ramp(a,b,ms){const s=Date.now();while(Date.now()-s<ms){const v=a+(b-a)*(Date.now()-s)/ms;$('#lbar').style.width=v+'%';$('#ltxt').textContent=`Loading ${Math.round(v)}%`;await sleep(30)}}
+(async()=>{await ramp(0,99,CFG.loadingMs);await sleep(500);$('#lbar').style.width='12%';$('#ltxt').textContent='Loading 12%… just kidding 😈';await sleep(1000);
+  await ramp(12,100,CFG.loadingMs);$('#ltxt').textContent='Loaded! (Sorry.)';await sleep(400);$('#load').remove();flop("Welcome to Flopgram. Bold of you.")})();
+</script>
+</body>
+</html>
